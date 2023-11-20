@@ -93,7 +93,7 @@ class DatabaseHelper:
             elif len(re.findall(r"[\d]{1,2}/[\d]{1,2}/[\d]{4}", value)) > 0:
                 valoresstring += f"'{self.ArreglarFecha(value)}',"
             elif re.match("^[^a-zA-Z]*[^a-zA-Z]$", value):
-                valoresstring += f"'{value.replace('.', '').replace(',', '.').replace('$', '')}',"
+                valoresstring += f"'{value.replace(',', '.').replace('$', '').replace('--------','1')}'," #quito este .replace('.', '')
             elif re.match("^[A-Za-z0-9_-]*$", value):
                 valoresstring += f"'{value}',"
             else:

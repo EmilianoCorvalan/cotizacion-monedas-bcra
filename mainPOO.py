@@ -1,6 +1,7 @@
 from requests import Session
 from lxml import html
 from DatabaseHelperPOO import DatabaseHelper
+from decimal import Decimal
 
 class ObtenerCotizaciones:
     def __init__(self):
@@ -20,7 +21,7 @@ class ObtenerCotizaciones:
 
         for moneda in self.monedas:
             payload = {
-                "Fecha": "2010.1.1",
+                "Fecha": "2013.1.1", #historico desde 2013
                 "Moneda": moneda['codigo']
             }
             r = self.s.post(url="http://www.bcra.gob.ar/PublicacionesEstadisticas/Evolucion_moneda_2.asp", data=payload)
@@ -32,14 +33,16 @@ class ObtenerCotizaciones:
                 arrayValores = []
                 arrayValores.append({"fecha": fila[0].text.replace("\r", "").replace("\n", "")})
                 arrayValores.append({"equivausd": fila[1].text})
-                arrayValores.append({"equivapeso": fila[2].text})
+                equivapesoComa = fila[2].text.replace("\r", "").replace("\n", "") #guardo en variable el numero recibido con coma.
+                equivapeso = Decimal(equivapesoComa.replace(',','.')) #paso a decimal el numero con coma.
+                arrayValores.append({"equivapeso": equivapeso})
                 arrayValores.append({"moneda": moneda['codigo']})
                 self.dbh.DBQuery(self.dbh.constructorInsert("cotizacion_historico", arrayValores))
                 print("Insertado: " + str(fila[0].text.replace("\r", "").replace("\n", "")) + "   " + moneda['nombre'])
 
         self.dbh.commit()
 
-
+        
 
 
 if __name__ == "__main__":
