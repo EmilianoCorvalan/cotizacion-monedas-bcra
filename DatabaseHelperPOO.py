@@ -100,3 +100,32 @@ class DatabaseHelper:
                 valoresstring += f"'{value}',"
         query = f"REPLACE into {tabla}({columnas[:-1]}) values({valoresstring[:-1]}) "
         return query
+
+    def historico2013(self, fecha_limite):
+        try:
+            # Consulta para obtener el historial desde 2013 hasta la fecha límite
+            query = ("SELECT cotizacion_historico.id, "
+                    "DATE_FORMAT(cotizacion_historico.fecha, '%d-%m-%Y') AS fecha_formateada, "
+                    "cotizacion_historico.equivausd, cotizacion_historico.equivapeso, "
+                    "moneda.nombre AS nombre_moneda, cotizacion_historico.updated_at "
+                    "FROM cotizacion_historico "
+                    "JOIN moneda ON cotizacion_historico.moneda = moneda.id_moneda "
+                    f"WHERE cotizacion_historico.fecha <= '{fecha_limite}'")
+            
+            resultados = self.DBQuery(query)
+
+            # Mostrar en consola
+            if resultados:
+                for resultado in resultados:
+                    print("ID:", resultado['id'])
+                    print("Fecha:", resultado['fecha_formateada'])
+                    print("Equivalente USD:", resultado['equivausd'])
+                    print("Equivalente Peso:", resultado['equivapeso'])
+                    print("Moneda:", resultado['nombre_moneda'])
+                    print("Actualizado el:", resultado['updated_at'])
+                    print("\n" + "-" * 50)  # Separador de guiones
+            else:
+                print("No se encontraron resultados en el historial.")
+
+        except Exception as e:
+            print(f"Error al obtener el historial: {e}")
