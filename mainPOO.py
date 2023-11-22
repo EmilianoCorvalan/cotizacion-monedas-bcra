@@ -172,7 +172,7 @@ class ObtenerCotizaciones:
             servidor.bind(('127.0.0.1', 2345))
             servidor.listen()
 
-            print("Servidor en espera de conexiones en el puerto 2345...")
+            print("\nServidor en espera de conexiones en el puerto 2345...")
 
             while True:
                 conn, addr = servidor.accept()
@@ -182,6 +182,7 @@ class ObtenerCotizaciones:
                     valor_moneda = self.consulta_especifica(fecha_cliente, 'Dolar estadounidense')
                     if valor_moneda is not None:
                         conn.sendall(f"El valor de la moneda Dólar estadounidense en la fecha {fecha_cliente} es: {valor_moneda}".encode('utf-8'))
+                        self.menu()
                     else:
                         conn.sendall("No se encontraron resultados para la fecha proporcionada.".encode('utf-8'))
 
